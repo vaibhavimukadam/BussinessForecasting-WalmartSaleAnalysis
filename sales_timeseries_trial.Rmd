@@ -1,0 +1,34 @@
+---
+title: "R Notebook"
+output: html_notebook
+author: Vaibhavi Mukadam
+---
+```{r}
+#library(dplyr)
+class(train)
+df=train
+df$Date <- as.Date(df$Date)
+#df
+class(df$Date)
+df_date=aggregate(df$Weekly_Sales, by=list(df$Date), sum)
+df_date2=aggregate(df$Weekly_Sales, by=list(df$Date), mean) #average of the values for particular date
+colnames(df_date) <- c("Date", "Weekly_Sales")
+colnames(df_date2) <- c("Date", "Weekly_Sales")
+
+#Create Timeseries
+train_ts = ts(df_date$Weekly_Sales, frequency = 52, start=c(2010,2))
+train_ts2 = ts(df_date2$Weekly_Sales, frequency = 52, start=c(2010,2))
+
+#train_ts Plot 
+plot(train_ts)
+plot(train_ts2)
+
+#Summary
+summary(train_ts)
+summary(train_ts2)
+
+#asf function: computes (and by default plots) an estimate of the autocorrelation function of a univariate time series.
+acf(train_ts)
+acf(train_ts2)
+
+```
