@@ -7,6 +7,8 @@ We will also be forecasting 10 data points from the future where the actual data
 Team Members -
   - Aditya Pai: https://github.com/adityapai2 
   - Cameron Clark: https://github.com/codingcam91/codingcam91
+
+
 Analyzing using following models -
   1. Naive
   2. snaive
