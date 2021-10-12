@@ -41,4 +41,86 @@ summary(train_ts)
 Acf(train_ts)
 #Acf(train_ts2)
 
+#naive
+
 ```
+Models -
+```{r}
+#Naive - naive() is simply a wrapper to rwf() for simplicity. 
+?naive
+naive_forecast <- naive(train_ts,10)
+plot(naive_forecast)
+
+#Snavie - snaive() returns forecasts and prediction intervals from an ARIMA(0,0,0)(0,1,0)m model where m is the seasonal period.
+snaive_forecast <- snaive(train_ts,10)
+plot(snaive_forecast)
+
+#stl -Forecasts of STL objects are obtained by applying a non-seasonal forecasting method to the seasonally adjusted data and re-seasonalizing using the last year of the seasonal component.
+?stlf
+stl_forecast <- stlf(train_ts,10)
+plot(stl_forecast)
+#rwf - rwf() returns forecasts and prediction intervals for a random walk with drift model applied to y.
+?rwf
+rw_forecast <- rwf(train_ts,10)
+plot(rw_forecast)
+
+#meanf
+mean_forecast <- meanf(train_ts,5)
+plot(mean_forecast)
+
+#ets - Exponential smoothing state space model
+ets_forecast <- ets(train_ts)
+ets_forecast
+```
+
+```{r}
+#HoltWinters
+```
+
+#holtwinters
+?HoltWinter
+hw_forecast_level <- HoltWinters(train_ts, beta=FALSE,gamma=FALSE)
+hw_forecast_level
+'''
+Smoothing parameters:
+ alpha: 0.3627892
+ beta : FALSE
+ gamma: FALSE
+```{r}
+
+```
+
+Coefficients:
+        [,1]
+a -0.2734504
+'''
+
+hw_forecast_trend <- HoltWinters(train_ts,gamma=FALSE)
+hw_forecast_trend
+'''
+Smoothing parameters:
+ alpha: 0.4650198
+ beta : 0.03481738
+ gamma: FALSE
+
+Coefficients:
+         [,1]
+a -0.29497489
+b -0.01180511
+'''
+hw_forecast_season <- HoltWinters(train_ts)
+hw_forecast_season
+'''
+Smoothing parameters:
+ alpha: 0.06058403
+ beta : 0.008478029
+ gamma: 0.5572539
+
+Coefficients:
+            [,1]
+a    0.186673552
+b    0.001450942
+s1   0.035006832
+s2   0.035393186
+...
+'''
