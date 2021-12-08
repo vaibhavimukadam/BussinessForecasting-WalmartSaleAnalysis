@@ -21,14 +21,17 @@ Analyzing using following models -
   7. Holtwinters
   
 TimeSeries - 
+----
 We can see that the time series has seasonality. Seasonality refers to a periodic pattern, within years, that is related to the calendar day, month, quarter etc…
 We can see that the time series does not appear to have a slight trend. A trend is a long run upward from the decomposed graph
 
 Autocorrelation of the time series -
+----
 We can see there is a strong negative correlation from the 5th lag. We should expect this given the seasonality of the time series.
 There is a strong correlation with the observation a year (52 weeks) prior, this is expected.
 
 Acuuracy Measure - Mean absolute percentage error : 
+----
 Actual data is non zero, that is, the aggregated data which we are analysing does not have zero as a value in Weekly Sales.
 MAPE puts a heavier penalty on negative errors than on positive errors.
 We cannot use MAE and RMSE as it depends upon the scale and also it is difficult to make comparison for a different time interval.
@@ -36,7 +39,8 @@ We cannot use MAE and RMSE as it depends upon the scale and also it is difficult
 ACF1: Autocorrelation of errors at lag 1. it is a measure of how much is the current value influenced by the previous values in a time series. It is expected that the autocorrelation function -- to fall towards 0 as points become more separated
 
 Model - Moving Average order 3
+-----
 Gives the best MAPE with good ACF1 value. 
 
-PPT : 
-
+---------------
+[Presenatation for details and plots](https://github.com/vaibhavimukadam/BussinessForecasting-WalmartSaleAnalysis/blob/master/BusinessForecasting_group9.pdf)
