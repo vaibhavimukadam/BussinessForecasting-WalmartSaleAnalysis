@@ -60,6 +60,8 @@ MA12_forecast <- ma(bf.ts,order=12)
 MA20_forecast <- ma(bf.ts,order=20)
 
 MA3 <- forecast(MA3_forecast,h= 52)
+MA6 <- forecast(MA6_forecast,h= 52)
+
 plot(MA3)
 plot(MA3_forecast, col="Red", main="Graph of Moving average with order 3" )
 plot(MA6_forecast, col="Blue", main="Graph of Moving average with order 6")
@@ -72,31 +74,49 @@ lines(MA6_forecast, col='Blue')
 lines(MA12_forecast, col='Green')
 lines(MA20_forecast, col='Black')
 accuracy(MA3)
-
+accuracy(MA6)
 checkresiduals(MA3)
-
-
+plot(MA3)
+lines(MA3$fitted, col="red")
+#lines(naivem$residuals, col="blue")
+plot(MA3$fitted,MA3$residuals,xy.labels = FALSE,xy.lines = FALSE)
+plot(MA3$fitted,MA3$x,xy.labels = FALSE,xy.lines = FALSE)
+checkresiduals(MA3)
+plot(MA6)
+lines(MA6$fitted, col="blue")
+#lines(naivem$residuals, col="blue")
+plot(MA6$fitted,MA6$residuals,xy.labels = FALSE,xy.lines = FALSE)
+plot(MA6$fitted,MA6$x,xy.labels = FALSE,xy.lines = FALSE)
 ```
 
 
 #Naive Model
 
 ```{r}
-naivem <- naive(bf.ts, 10)
+naivem <- naive(bf.ts, 52)
 plot(naivem)
+#Fitted and Residual
+lines(naivem$fitted, col="red")
+#lines(naivem$residuals, col="blue")
+plot(naivem$fitted,naivem$residuals,xy.labels = FALSE,xy.lines = FALSE)
+plot(naivem$fitted,naivem$x,xy.labels = FALSE,xy.lines = FALSE)
 
 #Accuracy MAPE= 6.365846
 accuracy(naivem)
 
-#Fitted and Residual
-lines(naivem$fitted, col="red")
-lines(naivem$residuals, col="blue")
-plot(naivem$fitted,naivem$residuals,xy.labels = FALSE,xy.lines = FALSE)
+#Accuracy MAPE= 6.365846
+accuracy(naivem)
 plot(naivem)
-checkresiduals(MA3)
+checkresiduals(naivem)
+
+#plot(naivefc$fitted,naivefc$residuals)
+plot.ts(log(naivem$fitted),log(naivem$residuals),xy.labels = FALSE,xy.lines = FALSE)
+plot.ts(naivem$x,naivem$residuals,xy.labels = FALSE,xy.lines = FALSE) #actual
+#minmax scale
+plot.ts(nfcnorm$fitted,nfcnorm$residuals,xy.labels = FALSE,xy.lines = FALSE)
+plot.ts(nfcnorm$x,nfcnorm$residuals,xy.labels = FALSE,xy.lines = FALSE) #actual
 
 ```
-
 
 #Seasonal naive model
 ```{r}
@@ -108,16 +128,14 @@ accuracy(snaivem)
 
 #fitted and residual
 
+plot(snaivem)
 lines(snaivem$fitted, col="red")
-lines(snaivem$residuals, col="blue")
+#lines(snaivem$residuals, col="blue")
 plot(snaivem$fitted,snaivem$residuals,xy.labels = FALSE,xy.lines = FALSE)
 plot(snaivem)
 checkresiduals(snaivem)
+plot.ts(snaivem$x,snaivem$residuals,xy.labels = FALSE,xy.lines = FALSE) #actual
 ```
-
-
-
-
 
 # RWF model
 ```{r}
@@ -147,15 +165,19 @@ bf.ts_hw
 attributes(bf.ts_hw)
 bf.ts_hw$SSE
 bf.ts_hw$coefficients
-forecast_hw <- forecast(bf.ts_hw,h=12)
+forecast_hw <- forecast(bf.ts_hw,h=52)
 forecast_hw
 plot(forecast_hw)
 checkresiduals(bf.ts_hw)
 accuracy(forecast_hw)
+
+#fitted and residual
+
+plot(forecast_hw)
+lines(forecast_hw$fitted, col="red")
+plot(forecast_hw$fitted,forecast_hw$residuals,xy.labels = FALSE,xy.lines = FALSE)
+plot(forecast_hw)
 ```
-
-
-
 
 # Fit model
 

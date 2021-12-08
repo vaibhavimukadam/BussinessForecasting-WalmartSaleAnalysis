@@ -1,8 +1,10 @@
 #BussinessForecasting-WalmartSaleAnalysis
+
 I am currently pursuing my masters in IT and Analytics at Rutgers. I am forecasting Walmart sales data for 45 stores on a weekly basis. 
 
 We will implementing time series on the date feature in format YYYY-MM-DD. The data set comes from Kaggle and is available at this [link|https://www.kaggle.com/c/walmart-recruiting-store-sales-forecasting/data]. This forecast will attempt to help alleviate issues related to inventory and sales during holidays and other events that effect inventory and sales. We will use a combination of forecasting accuracy methods including but not limited to MAPE, MSE, RMSE.
-We will also be forecasting 10 data points from the future where the actual data is not available. 
+
+We are looking at the year forecast to consider the seasonality of the data. 
 
 Team Members -
   - Aditya Pai: https://github.com/adityapai2 
@@ -18,3 +20,23 @@ Analyzing using following models -
   6. ets
   7. Holtwinters
   
+TimeSeries - 
+We can see that the time series has seasonality. Seasonality refers to a periodic pattern, within years, that is related to the calendar day, month, quarter etc…
+We can see that the time series does not appear to have a slight trend. A trend is a long run upward from the decomposed graph
+
+Autocorrelation of the time series -
+We can see there is a strong negative correlation from the 5th lag. We should expect this given the seasonality of the time series.
+There is a strong correlation with the observation a year (52 weeks) prior, this is expected.
+
+Acuuracy Measure - Mean absolute percentage error : 
+Actual data is non zero, that is, the aggregated data which we are analysing does not have zero as a value in Weekly Sales.
+MAPE puts a heavier penalty on negative errors than on positive errors.
+We cannot use MAE and RMSE as it depends upon the scale and also it is difficult to make comparison for a different time interval.
+
+ACF1: Autocorrelation of errors at lag 1. it is a measure of how much is the current value influenced by the previous values in a time series. It is expected that the autocorrelation function -- to fall towards 0 as points become more separated
+
+Model - Moving Average order 3
+Gives the best MAPE with good ACF1 value. 
+
+PPT : 
+
