@@ -1,17 +1,16 @@
-#BussinessForecasting-WalmartSaleAnalysis
+BussinessForecasting-WalmartSaleAnalysis
+----
 
-I am currently pursuing my masters in IT and Analytics at Rutgers. I am forecasting Walmart sales data for 45 stores on a weekly basis. 
+I am currently pursuing my masters in IT and Analytics at Rutgers. I am forecasting Walmart sales data for 45 retail stores on a weekly basis. 
 
-We will implementing time series on the date feature in format YYYY-MM-DD. The data set comes from Kaggle and is available at this [link|https://www.kaggle.com/c/walmart-recruiting-store-sales-forecasting/data]. This forecast will attempt to help alleviate issues related to inventory and sales during holidays and other events that effect inventory and sales. We will use a combination of forecasting accuracy methods including but not limited to MAPE, MSE, RMSE.
-
+We implemented time series on the date feature in format YYYY-MM-DD. The data set comes from Kaggle and is available at this [link](https://www.kaggle.com/c/walmart-recruiting-store-sales-forecasting/data).
 We are looking at the year forecast to consider the seasonality of the data. 
-
 Team Members -
   - Aditya Pai: https://github.com/adityapai2 
   - Cameron Clark: https://github.com/codingcam91/codingcam91
-
-
+ 
 Analyzing using following models -
+---
   1. Naive
   2. snaive
   3. rwf
@@ -43,4 +42,4 @@ Model - Moving Average order 3
 Gives the best MAPE with good ACF1 value. 
 
 ---------------
-[Presenatation for details and plots](https://github.com/vaibhavimukadam/BussinessForecasting-WalmartSaleAnalysis/blob/master/BusinessForecasting_group9.pdf)
+[Presenatation for Insights and plots](https://github.com/vaibhavimukadam/BussinessForecasting-WalmartSaleAnalysis/blob/master/BusinessForecasting_group9.pdf)
