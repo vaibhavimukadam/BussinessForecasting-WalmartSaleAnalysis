@@ -9,15 +9,28 @@ Team Members -
   - Aditya Pai: https://github.com/adityapai2 
   - Cameron Clark: https://github.com/codingcam91/codingcam91
  
+Data Description 
+---
+Data has Weekly sales of 45 retail strores for 3 years (2010,2011,2012). Data is avaulable across different stores and its departments.  We have aggregated data of all stores to get consistently dated data for the timeseries. Data added cross Million.
+
 Analyzing using following models -
 ---
   1. Naive
-  2. snaive
-  3. rwf
-  4. stl
-  5. meanf
-  6. ets
+    Since the data is seasonal, naive does not do a fair job as we get a point forecast of 45.54412
+  3. snaive
+    A seasonal naive model predicts the last value of the same season (same week last year) when forecasting.(Point : 1st Forecast: 48.65554, 6th Forecast: 55.56115, 10th Forecast: 44.9554)
+  5. rwf
+    First point forecast 45.51449	 and MAPE of 6.356664
+  6. meanf
+    Here as well, we get the mean forecast of 47.11342.
   7. Holtwinters
+    Point forecast for 1st Forecast: 48.32820, 6th Forecast: 56.65287, 10th Forecast: 45.10548 and MAPE of 1.932219
+    Smoothing parameters --> alpha: 0.06058175, beta : 0.008479722, gamma: 0.557241
+  9. Moving Averages
+    Order 3
+      MAPE : 0.775721 and ACF1: 0.008710816 
+    Order 6
+      MAPE : 0.3223557 and ACF1: 0.3467995
   
 TimeSeries - 
 ----
@@ -39,7 +52,9 @@ ACF1: Autocorrelation of errors at lag 1. it is a measure of how much is the cur
 
 Model - Moving Average order 3
 -----
-Gives the best MAPE with good ACF1 value. 
+Gives the best MAPE with good ACF1 value.
+Moving averages can be run at consistent interval to understand and be prepared for if there will be any influx for a particular time of the year.
+
 
 ---------------
 [Presenatation for Insights and plots](https://github.com/vaibhavimukadam/BussinessForecasting-WalmartSaleAnalysis/blob/master/BusinessForecasting_group9.pdf)
