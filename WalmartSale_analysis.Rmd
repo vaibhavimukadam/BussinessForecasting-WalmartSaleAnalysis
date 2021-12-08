@@ -1,0 +1,315 @@
+---
+title: "R Notebook"
+author: "Vaibhavi Mukadam"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+Handling Outliers
+In order to avoid outliers I just clipped the data based on assumption like: negative sales does not make sense at least from the context I had so far on the data provided and considering that probably top and bottom 1% could be treated as outliers
+above graph shows negative data being there. So from 2010-2012 distribution data are highly in the range of negatives up to $10.000
+```{r}
+library(tidyr)
+library(fpp)
+library(fpp2)
+library(fpp3)
+library(tseries)
+library(forecast)
+library(reshape2)
+library(lubridate)
+library(ggplot2)
+library(TTR)
+train = read.csv('train.csv')
+```
+
+Importing tables and change the date type
+```{r  eval = FALSE}
+df<-train
+#featdf=features
+df$Date = as.Date(df$Date)
+#featdf$Date = as.Date(featdf$Date)
+#Separating week, year, month, day
+df_sep = separate(df, "Date", c("Year", "Month", "Day"), sep = "-")
+df_sep$Week <- strftime(df$Date, "%W")
+df_date=aggregate(df$Weekly_Sales, by=list(df$Date), sum)
+#df$Weekly_Sales
+colnames(df_date) <- c("Date", "Weekly_Sales")
+# adding Numerical columns normalized using MinMaxScaler in the range 0 to 1.
+df_date$Weekly_Sales_norm = (df_date$Weekly_Sales - min(df_date$Weekly_Sales))/(max(df_date$Weekly_Sales) - min(df_date$Weekly_Sales))
+
+boxplot(df_sep$Weekly_Sales/1000000~df_sep$Year,xlab="Year", ylab="Weekly Sales (in Millions)")
+neg<- subset(df, df$Weekly_Sales<0)
+nrow(neg)
+boxplot(neg$Weekly_Sales)
+#check for empty values return false for all rows of the 4th table.
+table(is.na(df[,4]))
+ggplot(df_sep,aes(x=Weekly_Sales/boxplot(df_sep$Weekly_Sales~df_sep$Year,xlab="Year", ylab="Weekly Sales (in Millions)")
+))+ geom_histogram(aes(y=..density..),colour="black",fill="white", bins = 20)+ geom_density(alpha=.5, fill="Blue")
+
+boxplot(df_sep$Weekly_Sales/1000000~df_sep$Month,xlab="Month", ylab="Weekly Sales (in Millions)")
+boxplot(df_sep$Weekly_Sales/1000000~df_sep$Day,xlab="Day", ylab="Weekly Sales (in Millions)")
+boxplot(df_sep$Weekly_Sales/1000000~df_sep$Week,xlab="Week", ylab="Weekly Sales (in Millions)")
+hist(df_sep$Weekly_Sales)
+hist(df_date$Weekly_Sales)
+hist(log(df_sep$Weekly_Sales))
+hist(log(df_date$Weekly_Sales))
+#2010,2011 observations 
+boxplot((subset(df_sep, df_sep$Year<2012))$Weekly_Sales/1000000~(subset(df_sep, df_sep$Year<2012))$Month,xlab="Months of 2010,2011", ylab="Weekly Sales (in Millions)")
+
+```
+
+#From the day analysis of the weekly sales, from 23rd day of the month to 26th day are higher compared to others 
+#Initial analysis(EDA) - 
+#Weekly Sales is positively skewed indicating few large values. This could be caused by the festive Weeks which are few but Sales value for these weeks would be very high in comparison to other weeks
+```{r}
+#featdf2=aggregate(featdf$Temperature, by=list(featdf$Date), mean)
+df_date$Date1=df_date$Date
+df_date = separate(df_date, "Date1", c("Year", "Month", "Day"), sep = "-")
+df_date$Week <- strftime(df_date$Date, "%W")
+
+#df_store1 = subset(df, df$Store==1)
+#df_store1 = aggregate(df_store1$Weekly_Sales, by=list(df$Date), sum)
+```
+
+Insights
+Month of January witnessed the lowest sales for 2011 and 2012 while for 2010 the weekly sales are not given in the data.
+From February till October the weekly sales nearly remains constant for the 3 years.
+November and December showed the highest sales (Data is only available for 2010 and 2011)
+```{r}
+boxplot(df_date$Weekly_Sales/1000000~df_date$Month,xlab="Month", ylab="Weekly Sales (in Millions)")
+boxplot(df_date$Weekly_Sales/1000000~df_date$Week,xlab="Week", ylab="Weekly Sales (in Millions)")
+
+boxplot((subset(df_date, df_date$Year<2012))$Weekly_Sales/1000000~(subset(df_date, df_date$Year<2012))$Month,xlab="Months of 2010,2011", ylab="Weekly Sales (in Millions)")
+tail(df_date)
+```
+For all three years combined, we see drop in January for the sales where as the last 2 months have more sales, even 2012
+```{r}
+summary(df_date)
+plot(df_date)
+#wm_ts = ts(df_date$Weekly_Sales, frequency = 52, start=c(2010,5), end=c(2012,43))
+#train_ts Plot
+wm_ts = ts(df_date$Weekly_Sales, frequency = 52, start=c(2010,5))
+wm_ts_norm = ts(df_date$Weekly_Sales_norm, frequency = 52, start=c(2010,5))
+
+wm_ts
+plot(wm_ts)
+plot(wm_ts_norm)
+
+Acf(wm_ts)
+ggAcf(wm_ts)
+ggAcf(wm_ts_norm)
+
+acf(wm_ts)
+Pacf(wm_ts)
+```
+ACF - 
+Autocorrelation represents the degree of similarity between a given time series and a lagged version of itself over successive time intervals.
+Due to the seasonal pattern in the graph, the peak is at around the 52 week mark and when data are seasonal, the autocorrelations will be larger for the seasonal lags (at multiples of the seasonal frequency) than for other lags. 
+Negative seasonality could be due to the drop observed in Initial weeks that is in month of January
+
+
+Partial Autocorrelation is the correlation of the time series with a lag of itself, with the linear dependence of all the lags between them removed.
+```{r}
+#Decomposition
+decom <- decompose(wm_ts)
+seasadj_decom = seasadj(decom)
+plot(seasadj_decom)
+plot(wm_ts)
+lines(seasadj_decom, col="Red")
+round(decom$figure/10,2)
+round(decom$figure,2)
+plot(decom)
+plot(decom$trend)
+
+d2s<-stl(wm_ts,s.window ="periodic")
+plot(d2s)
+```
+From the plot above we can clearly see the seasonal component of the data, and we can also see the separated bumpy trend of the data.
+
+
+Models - 
+```{r}
+#naive
+naivefc = naive(wm_ts)# 10 points default
+nfcnorm =naive(wm_ts_norm)# 10 points default
+plot(naivefc)
+forecast(naivefc) #tabular same o/p
+plot(nfcnorm)
+plot(naive(wm_ts,h=12)) # 12 points ~3 months 
+plot(naive(wm_ts,h=24)) # 24 points ~6 months
+wm_ts
+accuracy(naivefc)
+accuracy(nfcnorm)
+
+checkresiduals(naivefc)
+checkresiduals(checkresiduals(naivefc))
+
+#plot(naivefc$fitted,naivefc$residuals)
+plot.ts(log(naivefc$fitted),log(naivefc$residuals),xy.labels = FALSE,xy.lines = FALSE)
+plot.ts(naivefc$x,naivefc$residuals,xy.labels = FALSE,xy.lines = FALSE) #actual
+#minmax scale
+plot.ts(nfcnorm$fitted,nfcnorm$residuals,xy.labels = FALSE,xy.lines = FALSE)
+plot.ts(nfcnorm$x,nfcnorm$residuals,xy.labels = FALSE,xy.lines = FALSE) #actual
+
+```
+Naive Point: forty-five million five hundred forty-four thousand one hundred sixteen dollars
+
+accuracy :      ME    RMSE     MAE        MPE     MAPE     MASE       ACF1
+Training set -29624.11 6261930 3144517 -0.7290743 6.365846 2.194441 -0.4120562
+
+Normalised values -
+
+Show in New Window
+                        ME      RMSE        MAE  MPE MAPE     MASE       ACF1
+Training set -0.0007167431 0.1515048 0.07608028 -Inf  Inf 2.194441 -0.4120562
+
+Residuals -
+histogram shows  -- 
+What does fitted vs residual mean? 
+
+RMSE will give really high values due 
+```{r}
+#moving average
+wmts_ma3=ma(wm_ts, 3)
+wmts_ma6=ma(wm_ts, 24) #6 months
+wmts_ma12=ma(wm_ts, 52)#12 Months
+
+plot.ts(wmts_ma3)
+lines(wm_ts, col='Red')
+plot(wmts_ma6)
+lines(wm_ts, col='Blue')
+plot(wmts_ma12)
+lines(wm_ts, col='Green')
+
+fc <- forecast(wmts_ma3,h=52)
+plot(fc)
+(accuracy(fc))
+checkresiduals(mts_ma3)
+
+#pending #residual analys
+```
+MA accuracy meassures 
+
+ ME     RMSE      MAE        MPE      MAPE       MASE     ACF1
+Training set 11755.64 107323.2 83865.22 0.02412632 0.1791315 0.08597031 0.432807
+
+```{r}
+#Simple Smoothing
+etsfc= ets(wm_ts)
+etsfc
+plot(etsfc)
+
+?plot(stlf(wm_ts))
+accuracy(stlf(wm_ts))
+
+SMA(wm_ts) # na 9, defalut 10th value
+wm_sma3=SMA(wm_ts_norm, n=12) #12 value
+plot.ts(wm_sma3, col='blue')
+lines(wm_ts, col='Red')
+
+wm_sma6=SMA(wm_ts_norm, n=24) #12 value
+
+wm_sma12=SMA(wm_ts, n=52) #12 value
+accuracy(forecast(wm_sma12))
+#forecast(wm_sma3)
+plot(forecast(wm_sma3)) # output in terms of weeks
+plot(forecast(wm_sma6)) # output in terms of weeks
+plot(forecast(wm_sma12)) # output in terms of weeks
+
+boxplot(wm_sma3)
+
+```
+To calculate the moving average of order 3, we set n = 3.
+#3months
+
+#6months
+
+#12 months 
+gives an idea about the trend or increment.
+TS data shows following -
+Warning in ets(wm_ts_norm) :
+  I can't handle data with frequency greater than 24. Seasonality will be ignored. Try stlf() if you need seasonal forecasts.
+  
+```{r}
+hwf = HoltWinters(wm_ts)
+f = forecast(wm_ts,h=12)
+hwf
+plot(hwf)
+accuracy(f)
+hwf_level = HoltWinters(wm_ts, beta=FALSE,gamma=FALSE)
+```
+REgression with lag 
+```{r}
+laggedTS <- lag(df_date, 3)
+plot(laggedTS)
+```
+
+
+Arima Model
+```{r}
+#library(tseries)
+# ADF test says differences is required if p-value is > 0.05
+adf.test(wm_ts)
+#p-value = 0.01
+# Kipps test says differences is required if p-value is < 0.05
+kpss.test(wm_ts)
+## Analysis: Differneces is not required
+
+#library(forecast)
+# NSDIFFS only works for seasonal data
+nsdiffs(wm_ts)
+
+# However NDIFFS works with non-seasonal data
+#ndiffs(wm_ts)
+
+tsdisplay(wm_ts)
+```
+Functions to estimate the number of differences required to make a given time series stationary. nsdiffs estimates the number of seasonal differences necessary.
+1 
+```{r}
+wm_ts1 <- diff(wm_ts, differences=1)
+# See if more differences is needed and how plots look
+tsdisplay(wm_ts1)
+ndiffs(wm_ts1)
+kpss.test(wm_ts1)
+adf.test(wm_ts1)
+```
+Autoarima
+```{r}
+auto_fit <- auto.arima(wm_ts)
+auto_fit
+# There are lot of attributes. ?auto.arima will tell you about them
+attributes(auto_fit) 
+wm_ts_arima = arima(wm_ts, order=c(1,1,1)) # fit an ARIMA(0,1,1) model
+wm_ts_arima
+plot(forecast(wm_ts_arima))
+accuracy(wm_ts_arima)
+checkresiduals(forecast(wm_ts_arima))
+
+qqnorm(forecast(wm_ts_arima))
+
+qqline(forecast(wm_ts_arima))
+```
+
+Train and Test data 
+
+```{r}
+train_ts = ts(df_date$Weekly_Sales, frequency = 52, start=c(2010,5), end=c(2011,43))
+test_ts = ts(df_date$Weekly_Sales, frequency = 52, start=c(2010,5), end=c(2011,44))
+
+```
+
+#Seasonal naive model
+```{r}
+?snaive
+snaivem <- snaive(wm_ts_norm, h=52)
+plot(snaivem)
+lines(wm_ts_norm,col="green")
+
+
+#Accuracy MAPE = 3.017517
+accuracy(snaivem)
+checkresiduals(snaivem)
+```
