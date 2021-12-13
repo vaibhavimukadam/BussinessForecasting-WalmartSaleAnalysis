@@ -39,9 +39,9 @@ Analyzing using following models -
       MAPE : 0.3223557 and ACF1: 0.3467995
  
 
-Explotary Data Analysis - 
+Exploratory Data Analysis - 
 ----
-Analysis of the datetime performed based on weekly and monthly data over 3 years of available data. 
+Analysis of the datetime performed based on weekly and monthly data over 3 years of available data.  Some points about weekly sales feature -
 1. First week of month show consideriable more sales compared to other weeks. 
 2. There are spikes in a few months. Eg : August which could be due schools reopening. 
 3. October to December sales are far more than other months due to the holiday season
