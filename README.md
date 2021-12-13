@@ -37,7 +37,20 @@ Analyzing using following models -
       MAPE : 0.775721 and ACF1: 0.008710816 
      Order 6
       MAPE : 0.3223557 and ACF1: 0.3467995
-  
+ 
+
+Explotary Data Analysis - 
+----
+Analysis of the datetime performed based on weekly and monthly data over 3 years of available data. 
+1. First week of month show consideriable more sales compared to other weeks. 
+2. There are spikes in a few months. Eg : August which could be due schools reopening. 
+3. October to December sales are far more than other months due to the holiday season
+4. Noteable events in the year such as Superbowl and Labour day which are in February and September show some spike in sales.
+
+Data Analysis - 
+---
+Negative sales exist and they are not removed as we considered them as returns which accured and we have included them in the total aggregated data of the weeks.
+
 TimeSeries - 
 ----
 We can see that the time series has seasonality. Seasonality refers to a periodic pattern, within years, that is related to the calendar day, month, quarter etc…
@@ -60,7 +73,6 @@ Model - Moving Average order 3
 -----
 Gives the best MAPE with good ACF1 value.
 Moving averages can be run at consistent interval to understand and be prepared for if there will be any influx for a particular time of the year.
-
 
 ---------------
 [Presenatation for Insights and plots](https://github.com/vaibhavimukadam/BussinessForecasting-WalmartSaleAnalysis/blob/master/BusinessForecasting_group9.pdf)
