@@ -6,10 +6,6 @@ output:
   html_document:
     df_print: paged
 ---
-
-Handling Outliers
-In order to avoid outliers I just clipped the data based on assumption like: negative sales does not make sense at least from the context I had so far on the data provided and considering that probably top and bottom 1% could be treated as outliers
-above graph shows negative data being there. So from 2010-2012 distribution data are highly in the range of negatives up to $10.000
 ```{r}
 library(tidyr)
 library(fpp)
@@ -33,12 +29,15 @@ df$Date = as.Date(df$Date)
 #Separating week, year, month, day
 df_sep = separate(df, "Date", c("Year", "Month", "Day"), sep = "-")
 df_sep$Week <- strftime(df$Date, "%W")
+```
+```{r}
 df_date=aggregate(df$Weekly_Sales, by=list(df$Date), sum)
 #df$Weekly_Sales
 colnames(df_date) <- c("Date", "Weekly_Sales")
 # adding Numerical columns normalized using MinMaxScaler in the range 0 to 1.
 df_date$Weekly_Sales_norm = (df_date$Weekly_Sales - min(df_date$Weekly_Sales))/(max(df_date$Weekly_Sales) - min(df_date$Weekly_Sales))
-
+```
+```{r}
 boxplot(df_sep$Weekly_Sales/1000000~df_sep$Year,xlab="Year", ylab="Weekly Sales (in Millions)")
 neg<- subset(df, df$Weekly_Sales<0)
 nrow(neg)
@@ -59,6 +58,9 @@ hist(log(df_date$Weekly_Sales))
 boxplot((subset(df_sep, df_sep$Year<2012))$Weekly_Sales/1000000~(subset(df_sep, df_sep$Year<2012))$Month,xlab="Months of 2010,2011", ylab="Weekly Sales (in Millions)")
 
 ```
+
+ negative sales exist 
+
 
 #From the day analysis of the weekly sales, from 23rd day of the month to 26th day are higher compared to others 
 #Initial analysis(EDA) - 
@@ -144,7 +146,6 @@ accuracy(naivefc)
 accuracy(nfcnorm)
 
 checkresiduals(naivefc)
-checkresiduals(checkresiduals(naivefc))
 
 #plot(naivefc$fitted,naivefc$residuals)
 plot.ts(log(naivefc$fitted),log(naivefc$residuals),xy.labels = FALSE,xy.lines = FALSE)
@@ -173,8 +174,8 @@ RMSE will give really high values due
 ```{r}
 #moving average
 wmts_ma3=ma(wm_ts, 3)
-wmts_ma6=ma(wm_ts, 24) #6 months
-wmts_ma12=ma(wm_ts, 52)#12 Months
+wmts_ma6=ma(wm_ts, 6) #6 months
+wmts_ma12=ma(wm_ts, 12)#12 Months
 
 plot.ts(wmts_ma3)
 lines(wm_ts, col='Red')
