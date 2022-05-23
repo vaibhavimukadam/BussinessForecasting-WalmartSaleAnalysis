@@ -5,9 +5,6 @@ I am currently pursuing my masters in IT and Analytics at Rutgers. I am forecast
 
 We implemented time series on the date feature in format YYYY-MM-DD. The data set comes from Kaggle and is available at this [link](https://www.kaggle.com/c/walmart-recruiting-store-sales-forecasting/data).
 We are looking at the year forecast to consider the seasonality of the data. 
-Team Members -
-  - Aditya Pai: https://github.com/adityapai2 
-  - Cameron Clark: https://github.com/codingcam91/codingcam91
  
 Data Description 
 ---
